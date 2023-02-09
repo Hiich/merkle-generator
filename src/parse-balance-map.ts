@@ -30,12 +30,12 @@ export function parseBalanceMap(balances: OldFormat | NewFormat[]): MerkleDistri
   const balancesInNewFormat: NewFormat[] = Array.isArray(balances)
     ? balances
     : Object.keys(balances).map(
-        (account): NewFormat => ({
-          address: account,
-          earnings: `0x${balances[account].toString(16)}`,
-          reasons: '',
-        })
-      )
+      (account): NewFormat => ({
+        address: account,
+        earnings: `${balances[account]}`,
+        reasons: '',
+      })
+    )
 
   const dataByAddress = balancesInNewFormat.reduce<{
     [address: string]: { amount: BigNumber; flags?: { [flag: string]: boolean } }
@@ -73,7 +73,7 @@ export function parseBalanceMap(balances: OldFormat | NewFormat[]): MerkleDistri
     memo[address] = {
       index,
       amount: amount.toHexString(),
-      proof: tree.getProof(index, address, amount),
+      proof: tree.getProof(address, amount),
       ...(flags ? { flags } : {}),
     }
     return memo

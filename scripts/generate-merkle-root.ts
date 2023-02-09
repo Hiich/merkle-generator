@@ -12,7 +12,14 @@ program
 program.parse(process.argv)
 
 const json = JSON.parse(fs.readFileSync(program.input, { encoding: 'utf8' }))
-
 if (typeof json !== 'object') throw new Error('Invalid JSON')
+const parseData = parseBalanceMap(json)
 
-console.log(JSON.stringify(parseBalanceMap(json)))
+for (const address in json) {
+  fs.writeFileSync(`./proofs/${address}.json`, JSON.stringify(
+    {
+      proof: parseData.claims[address].proof,
+      amount: parseData.claims[address].amount
+    }))
+}
+fs.writeFileSync('results.json', JSON.stringify(parseData))
